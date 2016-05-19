@@ -21,11 +21,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ExtractCardInfo extends JFrame {
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 1L;
 	private static final int HEIGHT_OF_WINDOW = 250;
 	private final JTextField fileField = new JTextField("");
 
-	private final JLabel resultLabel = new JLabel("You need to download the xml from https://github.com/HearthSim/hs-data/CardDefs.xml");
+	private final JLabel resultLabel = new JLabel("Download the xml from https://github.com/HearthSim/hs-data/CardDefs.xml");
 	private final JButton startButton = new JButton("Start");
 	private static ExtractCardInfo tm;
 
@@ -65,13 +65,6 @@ public class ExtractCardInfo extends JFrame {
 					String cardID = entity.getAttributes().getNamedItem("CardID").getNodeValue();
 
 					try {
-						// Collectible
-						expr = xpath.compile("//Entity[@CardID='" + cardID + "']/Tag[@name='Collectible']");
-						String cardCollectible = ((NodeList) expr.evaluate(doc, XPathConstants.NODESET)).item(0).getAttributes().getNamedItem("value").getNodeValue();
-						if (!cardCollectible.equals("1")) {
-							continue;
-						}
-
 						// CardName
 						expr = xpath.compile("//Entity[@CardID='" + cardID + "']/Tag[@name='CardName']/enUS");
 						String cardName = (String) expr.evaluate(doc, XPathConstants.STRING);
@@ -79,13 +72,8 @@ public class ExtractCardInfo extends JFrame {
 						// Cost , Class , Rarity , CardSet , CardType
 						expr = xpath.compile("//Entity[@CardID='" + cardID + "']/Tag[@name='Cost']");
 						String cardCost = ((NodeList) expr.evaluate(doc, XPathConstants.NODESET)).item(0).getAttributes().getNamedItem("value").getNodeValue();
-						String cardClass = "";
-						try {
-							expr = xpath.compile("//Entity[@CardID='" + cardID + "']/Tag[@name='Class']");
-							cardClass = ((NodeList) expr.evaluate(doc, XPathConstants.NODESET)).item(0).getAttributes().getNamedItem("value").getNodeValue();
-						} catch (Exception eCardClass) {
-							cardClass = "1";
-						}
+						expr = xpath.compile("//Entity[@CardID='" + cardID + "']/Tag[@name='Class']");
+						String cardClass = ((NodeList) expr.evaluate(doc, XPathConstants.NODESET)).item(0).getAttributes().getNamedItem("value").getNodeValue();
 						expr = xpath.compile("//Entity[@CardID='" + cardID + "']/Tag[@name='Rarity']");
 						String cardRarity = ((NodeList) expr.evaluate(doc, XPathConstants.NODESET)).item(0).getAttributes().getNamedItem("value").getNodeValue();
 						expr = xpath.compile("//Entity[@CardID='" + cardID + "']/Tag[@name='CardSet']");
@@ -113,7 +101,7 @@ public class ExtractCardInfo extends JFrame {
 			public void run() {
 				tm = new ExtractCardInfo();
 				tm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				tm.setSize(600, HEIGHT_OF_WINDOW);
+				tm.setSize(500, HEIGHT_OF_WINDOW);
 				tm.setLocationRelativeTo(null);
 				tm.setVisible(true);
 			}
