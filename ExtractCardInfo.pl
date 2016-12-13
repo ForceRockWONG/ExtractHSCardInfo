@@ -51,29 +51,31 @@ sub saveToTxt {
 sub keepCollectible {
 	my $entities_ref = shift;
 	my @entities;
+	
 	for my $anEntity (@{$entities_ref}) {
 		my $xp = XML::XPath->new(xml => $anEntity);
 		#2.1. Collectible?
-		next unless $xp->findvalue('/Entity/Tag[@name="Collectible"]/@value');
+		next unless $xp->findvalue('/Entity/Tag[enumID="321"]/@value');
 		#2.2. Hero?
-		my $CardType = $xp->findvalue('/Entity/Tag[@name="CardType"]/@value');
+		my $CardType = $xp->findvalue('/Entity/Tag[enumID="202"]/@value');
 		next if $CardType == 3;
 		#2.3. We need to get:
 		my %card = (
-			Cost		=> $xp->findvalue('/Entity/Tag[@name="Cost"]/@value'),
-			CardName	=> $xp->findvalue('/Entity/Tag[@name="CardName"]/enUS'),
-			Class		=> addText2Class($xp->findvalue('/Entity/Tag[@name="Class"]/@value')),
-			Rarity		=> addText2Rarity($xp->findvalue('/Entity/Tag[@name="Rarity"]/@value')),
-			CardSet		=> $xp->findvalue('/Entity/Tag[@name="CardSet"]/@value'),
+			Cost		=> $xp->findvalue('/Entity/Tag[enumID="48"]/@value'),
+			CardName	=> $xp->findvalue('/Entity/Tag[enumID="185"]/enUS'),
+			Class		=> changeValue2Class($xp->findvalue('/Entity/Tag[enumID="199"]/@value')),
+			Rarity		=> changeValue2Rarity($xp->findvalue('/Entity/Tag[enumID="203"]/@value')),
+			CardSet		=> $xp->findvalue('/Entity/Tag[enumID="183"]/@value'),
 			CardID		=> $xp->findvalue('/Entity/@CardID'),
-			CardType	=> addText2CardType($CardType)
+			CardType	=> changeValue2CardType($CardType)
 		);
 		push @entities, \%card;
 	}
+
 	return \@entities;
 }
 
-sub addText2Class {
+sub changeValue2Class {
 	my $value = shift;
 	my $text;
 	
@@ -81,17 +83,17 @@ sub addText2Class {
 	elsif	($value == 3) { $text = "Hunter";}
 	elsif	($value == 4) { $text = "Mage";}
 	elsif	($value == 5) { $text = "Paladin";}
-	elsif	($value == 6) { $text = "Prist";}
+	elsif	($value == 6) { $text = "Priest";}
 	elsif	($value == 7) { $text = "Rogue";}
 	elsif	($value == 8) { $text = "Shaman";}
 	elsif	($value == 9) { $text = "Warlock";}
 	elsif	($value == 10){ $text = "Warrior";}
-	elsif	($value == 12){ $text = "Natural";}
+	elsif	($value == 12){ $text = "Neutral";}
 	
-	return "$value$text";
+	return checkDebugMode($value, $text);
 }
 
-sub addText2Rarity {
+sub changeValue2Rarity {
 	my $value = shift;
 	my $text;
 	
@@ -99,12 +101,12 @@ sub addText2Rarity {
 	elsif	($value == 2) { $text = "Basic";}
 	elsif	($value == 3) { $text = "Rare";}
 	elsif	($value == 4) { $text = "Epic";}
-	elsif	($value == 5) { $text = "Legindary";}
+	elsif	($value == 5) { $text = "Legendary";}
 	
-	return "$value$text";
+	return checkDebugMode($value, $text);
 }
 
-sub addText2CardType {
+sub changeValue2CardType {
 	my $value = shift;
 	my $text;
 	
@@ -112,6 +114,13 @@ sub addText2CardType {
 	elsif	($value == 5) { $text = "Spell";}
 	elsif	($value == 7) { $text = "Weapon";}
 	elsif	($value == 3) { $text = "Hero";}
+	
+	return checkDebugMode($value, $text);
+}
+
+sub checkDebugMode {
+	my $value = shift;
+	my $text = shift;
 	
 	return "$value$text";
 }
