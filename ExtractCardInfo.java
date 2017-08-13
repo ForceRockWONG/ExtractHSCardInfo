@@ -35,10 +35,10 @@ import org.xml.sax.InputSource;
 
 public class ExtractCardInfo extends JFrame {
 	private static final long serialVersionUID = -7844908032131837091L;
-	private static final String VERSION_NO = "4";
+	private static final String VERSION_NO = "5";
 	private static final int HEIGHT_OF_WINDOW = 250;
 	
-	private final JTextField fileField = new JTextField("\\CardDefs.xml");
+	private final JTextField fileField = new JTextField("<folder path>\\CardDefs.xml");
 	private final JRadioButton debugRButton = new JRadioButton("Debug mode", false);
 	private final JLabel resultLabel = new JLabel("You need to download CardDefs.xml from https://github.com/HearthSim/hs-data");
 	private final JButton startButton = new JButton("Start");
@@ -59,7 +59,8 @@ public class ExtractCardInfo extends JFrame {
 					}
 
 					pw = new PrintWriter("cardDB.txt");
-					pw.println("Cost\tName\tClass\tRarity\tCardSet\tCardID\tCardType");
+//					pw.println("Cost\tName\tClass\tRarity\tCardSet\tCardID\tCardType");
+					pw.println("Cost\tName\tClass\tRarity\tCardSet\tCardType");
 					extract(sourceFile);
 					pw.close();
 
@@ -163,24 +164,19 @@ public class ExtractCardInfo extends JFrame {
 					Element entity = (Element) nodes.item(i);
 					doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(nodeToString(entity))));
 
-					// Hero?
-					xpath = XPathFactory.newInstance().newXPath();
-					String cardCardType = xpath.compile("/Entity/Tag[@enumID='202']/@value").evaluate(doc);
-					if (cardCardType.equals("3")) {
-						continue;
-					}
-
 					String cardCost = xpath.compile("/Entity/Tag[@enumID='48']/@value").evaluate(doc);
 					if (cardCost.equals("")) {
 						cardCost = "0";
 					}
 					String cardName = xpath.compile("/Entity/Tag[@enumID='185']/enUS").evaluate(doc);
 					String cardClass = xpath.compile("/Entity/Tag[@enumID='199']/@value").evaluate(doc);
+					String cardCardType = xpath.compile("/Entity/Tag[@enumID='202']/@value").evaluate(doc);
 					String cardRarity = xpath.compile("/Entity/Tag[@enumID='203']/@value").evaluate(doc);
 					String cardCardSet = xpath.compile("/Entity/Tag[@enumID='183']/@value").evaluate(doc);
-					String cardID = entity.getAttribute("CardID");
+//					String cardID = entity.getAttribute("CardID");
 
-					String text = cardCost + "\t" + cardName + "\t" + changeValue2Class(cardClass) + "\t" + changeValue2Rarity(cardRarity, cardCardSet) + "\t" + cardCardSet + "\t" + cardID + "\t" + changeValue2CardType(cardCardType);
+//					String text = cardCost + "\t" + cardName + "\t" + changeValue2Class(cardClass) + "\t" + changeValue2Rarity(cardRarity, cardCardSet) + "\t" + cardCardSet + "\t" + cardID + "\t" + changeValue2CardType(cardCardType);
+					String text = cardCost + "\t" + cardName + "\t" + changeValue2Class(cardClass) + "\t" + changeValue2Rarity(cardRarity, cardCardSet) + "\t" + cardCardSet + "\t" + changeValue2CardType(cardCardType);
 					pw.println(text);
 				}
 			}
